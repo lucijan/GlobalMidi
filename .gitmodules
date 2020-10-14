@@ -1,0 +1,3 @@
+[submodule "External/MinKit"]
+	path = External/MinKit
+	url = https://github.com/Cycling74/min-devkit.git
