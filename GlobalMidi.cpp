@@ -22,11 +22,8 @@ public:
     {
         g_objects.insert(this);
 
-        std::cerr << "global_midi " << this << std::endl;
-
         if(!g_client)
         {
-            std::cerr << "*** creating client" << std::endl;
             auto status = MIDIClientCreate(CFSTR("GlobalMidi"), &midiNotification,
                                            nullptr, &g_client);
             if(status != noErr)
@@ -45,7 +42,6 @@ public:
     {
         g_objects.erase(this);
 
-        std::cerr << "~global_midi " << this << std::endl;
         MIDIPortDispose(m_inPort);
     }
 
@@ -58,7 +54,6 @@ public:
     outlet<> output	{ this, "(int) midi byte" };
 
 
-    // define an optional argument for setting the message
     argument<symbol> device_arg { this, "device", "Device to connect to.",
         MIN_ARGUMENT_FUNCTION {
             device = arg;
@@ -87,23 +82,6 @@ public:
         }
     };
 
-    /*
-    message<> bang { this, "bang", "Post the greeting.",
-        MIN_FUNCTION {
-            output.send(g_client ? "YES" : "NO");
-
-            return {};
-        }
-    };
-    */
-
-    // post to max window == but only when the class is loaded the first time
-    message<> maxclass_setup { this, "maxclass_setup",
-        MIN_FUNCTION {
-            return {};
-        }
-    };
-
     void connectInput(const std::string &deviceString)
     {
         if(!m_inPort)
@@ -113,8 +91,6 @@ public:
 
         auto numSources = MIDIGetNumberOfSources();
 
-        std::cerr << "Requested:" << deviceString << std::endl;
-
         for(auto i = 0; i < numSources; i++)
         {
             auto endPoint = MIDIGetSource(i);
@@ -123,19 +99,13 @@ public:
 
             char name[64];
             CFStringGetCString(fname, name, 64, 0);
-            std::cerr << "Found: " << name << std::endl;
 
             if(deviceString == name)
             {
-                std::cerr << "  => match" << std::endl;
                 auto status = MIDIPortConnectSource(m_inPort, endPoint, nullptr);
                 if(status != noErr)
                 {
                     cout << "Couldn't connect to device" << endl;
-                }
-                else
-                {
-                    cout << "Connected" << endl;
                 }
             }
             else
@@ -147,7 +117,6 @@ public:
 
     void devicesChanged()
     {
-        cout << "Devices changed" << endl;
         symbol the_device = device;
         connectInput(the_device);
     }
@@ -170,8 +139,6 @@ public:
 
 void midiNotification(const MIDINotification *message, void *refCon)
 {
-    std::cerr << "midiNotification:" << refCon << std::endl;
-
     switch(message->messageID)
     {
         case kMIDIMsgSetupChanged:
