@@ -10,3 +10,17 @@ Download here: https://github.com/lucijan/GlobalMidi/releases/download/v0.1/Glob
 ## Platform availablility
 
 GlobalMidi is **only** available for macOS.
+
+## Building
+
+```
+git submodule update --init --recursive
+cd External/MinKit/
+mkdir build
+cd build/
+cmake -GXcode ..
+cmake --build .
+cd ../../../build/
+cmake -GXcode ..
+cmake --build .
+```
