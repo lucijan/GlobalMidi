@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(GlobalMidi)
 
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
 set(C74_MIN_API_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/MinKit/source/min-api)
 include(${C74_MIN_API_DIR}/script/min-pretarget.cmake)
 
